@@ -30,8 +30,8 @@ export default function Checkout() {
     );
   }
 
-  const shipping = total >= 2000 ? 0 : 100;
-  const grand = total + shipping;
+  const shipping = 0;
+  const grand = total;
 
   const submit = async (e) => {
     e.preventDefault();
@@ -41,7 +41,9 @@ export default function Checkout() {
     }
     setSubmitting(true);
     try {
-      const { data } = await api.post("/orders", { ...form, items });
+      // backend OrderIn does not include payment_mode; omit it to avoid 422
+      const { payment_mode: _paymentMode, ...requestBody } = form;
+      const { data } = await api.post("/orders", { ...requestBody, items });
       clear();
       toast.success("Order placed!", { description: `Order ${data.order_no}` });
 
@@ -181,7 +183,7 @@ export default function Checkout() {
             </div>
             <div className="mt-5 pt-5 border-t border-brand space-y-2 text-sm">
               <div className="flex justify-between text-body"><span>Subtotal</span><span>{formatPrice(total)}</span></div>
-              <div className="flex justify-between text-body"><span>Shipping</span><span>{shipping === 0 ? "Free" : formatPrice(shipping)}</span></div>
+              <div className="flex justify-between text-body"><span>Shipping</span><span>₹0</span></div>
               <div className="flex justify-between font-display text-lg font-semibold text-heading pt-2 border-t border-brand"><span>Total</span><span>{formatPrice(grand)}</span></div>
             </div>
             <button type="submit" disabled={submitting} className="btn-primary w-full mt-6" data-testid="checkout-place-order-btn">

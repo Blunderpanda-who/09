@@ -57,8 +57,8 @@ export default function Cart() {
             <h2 className="font-display text-2xl font-semibold text-heading mb-6">Summary</h2>
             <div className="space-y-3 text-sm">
               <div className="flex justify-between text-body"><span>Subtotal</span><span>{formatPrice(total)}</span></div>
-              <div className="flex justify-between text-body"><span>Shipping</span><span>{total >= 2000 ? "Free" : "₹100"}</span></div>
-              <div className="border-t border-brand pt-3 flex justify-between font-display text-lg font-semibold text-heading"><span>Total</span><span data-testid="cart-total">{formatPrice(total + (total >= 2000 ? 0 : 100))}</span></div>
+              <div className="flex justify-between text-body"><span>Shipping</span><span>₹0</span></div>
+              <div className="border-t border-brand pt-3 flex justify-between font-display text-lg font-semibold text-heading"><span>Total</span><span data-testid="cart-total">{formatPrice(total)}</span></div>
             </div>
             <button onClick={() => navigate(user ? "/checkout" : "/login")} className="btn-primary w-full mt-6" data-testid="cart-checkout-btn">
               {user ? "Proceed to checkout" : "Sign in to checkout"} <ArrowRight className="w-4 h-4" />
