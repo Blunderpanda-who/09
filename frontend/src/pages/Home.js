@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, ShieldCheck, Truck, Sparkles, MessageCircle } from "lucide-react";
-import { api, buildWhatsAppLink } from "@/lib/api";
+import { api, buildWhatsAppLink, notifyApiError } from "@/lib/api";
 import { useBranding, useContact } from "@/context/AppContexts";
 import ProductCard from "@/components/ProductCard";
 
@@ -21,6 +21,8 @@ export default function Home() {
         ]);
         setFeatured(p.data);
         setCategories(c.data);
+      } catch (err) {
+        notifyApiError(err, "Home");
       } finally { setLoading(false); }
     })();
   }, []);

@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
-import { api } from "@/lib/api";
+import { api, notifyApiError } from "@/lib/api";
+
+// notifyApiError is used to surface API failures in production logs.
 
 // ---------- Auth ----------
 const AuthCtx = createContext(null);
@@ -63,7 +65,7 @@ export function BrandingProvider({ children }) {
         link.href = data.favicon_url;
       }
       if (data?.brand_name) document.title = data.brand_name;
-    } catch (e) { /* keep defaults */ }
+    } catch (e) { notifyApiError(e, "Branding"); /* keep defaults */ }
   }, []);
   useEffect(() => { reload(); }, [reload]);
   return <BrandingCtx.Provider value={{ branding, reload }}>{children}</BrandingCtx.Provider>;
@@ -79,7 +81,7 @@ export function ContactProvider({ children }) {
     try {
       const { data } = await api.get("/contact-settings");
       setContact(data);
-    } catch (e) { /* defaults */ }
+    } catch (e) { notifyApiError(e, "Contact settings"); /* defaults */ }
   }, []);
   useEffect(() => { reload(); }, [reload]);
   return <ContactCtx.Provider value={{ contact, reload }}>{children}</ContactCtx.Provider>;

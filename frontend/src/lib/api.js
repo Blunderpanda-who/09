@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "https://kk-0ost.onrender.com";
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "https://zero9-4c6b.onrender.com";
 export const api = axios.create({ baseURL: `${BACKEND_URL}/api` });
 
 api.interceptors.request.use((config) => {
@@ -17,6 +17,15 @@ export function formatApiError(detail) {
   }
   if (detail && typeof detail.msg === "string") return detail.msg;
   return String(detail);
+}
+
+// Central place to surface API failures in production.
+export function notifyApiError(err, context) {
+  const detail = err?.response?.data?.detail ?? err?.message ?? err;
+  const msg = formatApiError(detail);
+  // eslint-disable-next-line no-console
+  console.error(`[API][${context}]`, msg, err);
+  return msg;
 }
 
 export const formatPrice = (n) =>

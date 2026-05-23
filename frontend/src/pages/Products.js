@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Search, SlidersHorizontal, X } from "lucide-react";
-import { api } from "@/lib/api";
+import { api, notifyApiError } from "@/lib/api";
 import ProductCard from "@/components/ProductCard";
 
 export default function Products() {
@@ -16,7 +16,9 @@ export default function Products() {
   const activeCat = params.get("category") || "";
   const isFeatured = params.get("featured") === "true";
 
-  useEffect(() => { api.get("/categories").then((r) => setCategories(r.data)); }, []);
+  useEffect(() => {
+    api.get("/categories").then((r) => setCategories(r.data)).catch((err) => notifyApiError(err, "Products:categories"));
+  }, []);
 
   useEffect(() => {
     setLoading(true);
@@ -24,7 +26,11 @@ export default function Products() {
     if (q) queryParams.q = q;
     if (activeCat) queryParams.category_id = activeCat;
     if (isFeatured) queryParams.featured = true;
-    api.get("/products", { params: queryParams }).then((r) => setProducts(r.data)).finally(() => setLoading(false));
+    api
+      .get("/products", { params: queryParams })
+      .then((r) => setProducts(r.data))
+      .catch((err) => notifyApiError(err, "Products:products"))
+      .finally(() => setLoading(false));
   }, [q, activeCat, isFeatured, sort]);
 
   const updateParam = (key, value) => {
